@@ -45,6 +45,7 @@ class SaleOrderInherit(models.Model):
             else:
                 order.state = 'draft'
 
+    # noinspection PyUnresolvedReferences
     def open_project_form(self):
         self.ensure_one()
         if self.business_project:

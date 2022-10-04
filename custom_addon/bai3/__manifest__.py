@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 {
     'name': "bai3",
     'category': 'Administration',
@@ -8,6 +7,5 @@
         'security/group.xml',
         'views/business_project.xml',
         'views/sale_order_view_inherit.xml',
-        'views/templates.xml',
     ],
 }

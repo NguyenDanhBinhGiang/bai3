@@ -34,7 +34,7 @@ class BusinessProject(models.Model):
                    ('draft', 'approved'),
                    ('draft', 'declined'),
                    ('sent', 'approved'),
-                   ('sent', 'declined'),]
+                   ('sent', 'declined')]
         return (old_state, new_state) in allowed
 
     def change_state(self, new_state):
