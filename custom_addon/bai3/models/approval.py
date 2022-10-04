@@ -28,6 +28,9 @@ class Approval(models.Model):
         if not self.user_has_groups('bai3.business_project_manager'):
             if 'approve_state' in vals:
                 raise odoo.exceptions.UserError('You do not have permission!')
+        # else:
+        #     if self.approve_state != 'draft':
+        #         raise odoo.exceptions.UserError('You can not edit project detail after sending it')
         super(Approval, self).write(vals)
 
     @api.model
