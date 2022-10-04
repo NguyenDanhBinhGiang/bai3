@@ -17,8 +17,8 @@
     <record id="project_form" model="ir.ui.view">
     <field name="name">Business Project Form</field>
     <field name="model">business.project</field>
-    <field name="arch" type="xml">
-        <form>
+    <field name="arch" type="xml" >
+        <form attrs="{'readonly': [('state', '!=', 'draft')]}">
             <header>
                 <button name="make_sent" type="object" string="Sent for confirmation" class="oe_highlight"
                         attrs="{'invisible': [('state', '!=', 'draft')]}"
@@ -38,9 +38,10 @@
                         name="approvals_id"
                         widget="section_and_note_one2many"
                         mode="tree"
+                        attrs="{'readonly': [('state', '!=', 'draft')]}"
                     >
                         <tree editable="bottom">
-                            <field name="partner_id" widget="c" />
+                            <field name="partner_id"/>
                             <field name="approve_state" readonly="True"/>
                             <field name="btn_visible" readonly="True" invisible="True"/>
                             <button name="make_approved" type="object" string="Approve" class="oe_highlight"

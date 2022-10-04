@@ -24,9 +24,23 @@ class BusinessProject(models.Model):
                 approve_result = [x.approve_state == 'approved' for x in record.approvals_id]
                 decline_result = [x.approve_state == 'declined' for x in record.approvals_id]
                 if any(decline_result):
-                    record.state = 'declined'
+                    try:
+                        record.change_state('declined')
+                        self.sudo().message_post(body=f'Your project \"{record.name}\" has been declined',
+                                                 partner_ids=[record.create_uid.partner_id.id],
+                                                 message_type='notification')
+                    except odoo.exceptions.UserError as e:
+                        raise e
+                        pass
                 elif all(approve_result):
-                    record.state = 'approved'
+                    try:
+                        record.change_state('approved')
+                        self.sudo().message_post(body=f'Your project \"{record.name}\" has been approved',
+                                                 partner_ids=[record.create_uid.partner_id.id],
+                                                 message_type='notification')
+                    except odoo.exceptions.UserError as e:
+                        raise e
+                        pass
 
     @api.model
     def is_allowed_transition(self, old_state, new_state):
