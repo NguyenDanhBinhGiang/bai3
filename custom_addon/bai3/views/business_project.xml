@@ -28,7 +28,7 @@
             </header>
             <sheet>
                 <group>
-                    <field name="name"/>
+                    <field name="name" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
                     <field name="sale_order_id" widget="many2one_tags"
                            attrs="{'readonly': [('state', '!=', 'draft')]}"/>
                     <field name="detail" attrs="{'readonly': [('state', '!=', 'draft')]}"/>

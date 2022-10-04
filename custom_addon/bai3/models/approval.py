@@ -21,7 +21,8 @@ class Approval(models.Model):
         for record in self:
             is_correct_user = (record.env.user.partner_id == record.partner_id)
             project_is_waiting_for_approve = record.business_project_id.state == 'sent'
-            record.btn_visible = is_correct_user and project_is_waiting_for_approve
+            approval_gave = record.approve_state != 'draft'
+            record.btn_visible = is_correct_user and project_is_waiting_for_approve and not approval_gave
 
     def write(self, vals):
         if not self.user_has_groups('bai3.business_project_manager'):
