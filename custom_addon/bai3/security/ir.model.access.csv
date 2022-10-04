@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+acl_business_project_admin,business_project,model_business_project,base.group_system,1,1,1,1
+acl_business_project_user,business_project,model_business_project,base.group_user,1,1,1,0
+acl_approval_admin,approval,model_approval,base.group_system,1,1,1,1
+acl_approval_user,approval,model_approval,base.group_user,1,1,1,0

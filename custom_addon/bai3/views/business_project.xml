@@ -1,0 +1,91 @@
+<odoo>
+  <data>
+    <!-- list view  -->
+    <record model="ir.ui.view" id="project_list_view">
+      <field name="name">Business Project List view</field>
+      <field name="model">business.project</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="sale_order_id" widget="many2one_tags"/>
+          <field name="detail"/>
+          <field name="state"/>
+        </tree>
+      </field>
+    </record>
+
+    <!-- form  -->
+    <record id="project_form" model="ir.ui.view">
+    <field name="name">Business Project Form</field>
+    <field name="model">business.project</field>
+    <field name="arch" type="xml">
+        <form>
+            <header>
+                <button name="make_sent" type="object" string="Sent for confirmation" class="oe_highlight"
+                        attrs="{'invisible': [('state', '!=', 'draft')]}"
+                />
+                <field name="state" widget="statusbar"
+                       statusbar_visible="draft,sent,approved"/>
+            </header>
+            <sheet>
+                <group>
+                    <field name="name"/>
+                    <field name="sale_order_id" widget="many2one_tags"
+                           attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                    <field name="detail" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                </group>
+                <group>
+                    <field
+                        name="approvals_id"
+                        widget="section_and_note_one2many"
+                        mode="tree"
+                    >
+                        <tree editable="bottom">
+                            <field name="partner_id" widget="c" />
+                            <field name="approve_state" readonly="True"/>
+                            <field name="btn_visible" readonly="True" invisible="True"/>
+                            <button name="make_approved" type="object" string="Approve" class="oe_highlight"
+                                    attrs="{'invisible': [('btn_visible', '!=', True)]}"/>
+                            <button name="make_declined" type="object" string="Decline" class="oe_highlight"
+                                    attrs="{'invisible': [('btn_visible', '!=', True)]}"/>
+                        </tree>
+                    </field>
+                </group>
+
+            </sheet>
+            <div class="oe_chatter">
+                <field name="message_follower_ids"/>
+                <field name="activity_ids"/>
+                <field name="message_ids"/>
+            </div>
+
+        </form>
+    </field>
+    </record>
+
+<!--Default filter-->
+<!--    <record id="business_project_filters" model="ir.ui.view">-->
+<!--      <field name="name">business project filters</field>-->
+<!--      <field name="model">business.project</field>-->
+<!--      <field name="arch" type="xml">-->
+<!--          <search>-->
+<!--              <filter string="My Project" name="my_business_project" domain="[('create_uid', '=', uid)]"/>-->
+<!--          </search>-->
+<!--      </field>-->
+<!--    </record>-->
+
+    <!-- actions opening views on models -->
+    <record id='business_project_action_window' model='ir.actions.act_window'>
+        <field name="name">Business Project</field>
+        <field name="res_model">business.project</field>
+        <field name="context">{'my_business_project': 1}</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'view_mode': 'tree', 'view_id': ref('project_list_view')}),
+            (0, 0, {'view_mode': 'form', 'view_id': ref('project_form')})]"
+        />
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <!-- menu item -->
+    <menuitem name="Project" id="project_menu" action="business_project_action_window" parent="sale.sale_menu_root"/>
+  </data>
+</odoo>
