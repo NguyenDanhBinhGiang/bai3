@@ -8,7 +8,7 @@ class Approval(models.Model):
 
     user_id = fields.Many2one('res.users')
     business_plan_id = fields.Many2many('business.plan', 'business_approval_rel',
-                                        'business_plan_id', 'approvals_id')
+                                        'business_plan_id', 'approvals_id', ondelete='cascade')
     approve_state = fields.Selection([
         ('draft', 'Waiting for review'),
         ('approved', 'Approved'),

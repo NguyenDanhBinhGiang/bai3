@@ -14,11 +14,19 @@ class BusinessPlan(models.Model):
         ('declined', 'Declined')],
         string='Status', readonly=True, index=True, default='draft', compute='_compute_state', store=True)
     readonly_state = fields.Boolean(compute='_compute_readonly', invisible=True, default=False)
-    sale_order_id = fields.Many2one('sale.order', required=True, readonly=True)
+    sale_order_id = fields.Many2one('sale.order', required=True, readonly=True, ondelete='restrict')
     name = fields.Char(compute='_compute_name', store=True)
     detail = fields.Text('Business info', required=True)
-    approvals_id = fields.Many2many('approval', 'business_approval_rel', 'approvals_id', 'business_plan_id')
+    approvals_id = fields.Many2many('approval', 'business_approval_rel', 'approvals_id', 'business_plan_id',
+                                    ondelete='cascade')
+
     # rec_name = fields.Text(compute='_compute_rec_name', invisible=True)
+
+    @api.constrains('approvals_id')
+    def constrain_approval(self):
+        for record in self:
+            if len(record.approvals_id) < 1:
+                raise odoo.exceptions.UserError("Approve list empty")
 
     @api.depends('name', 'sale_order_id.name')
     def _compute_name(self):
@@ -28,7 +36,8 @@ class BusinessPlan(models.Model):
     @api.depends('state')
     def _compute_readonly(self):
         for record in self:
-            record.readonly_state = record.state not in ['draft', 'declined']  # or self.env.user.id == record.create_uid
+            record.readonly_state = record.state not in ['draft',
+                                                         'declined']  # or self.env.user.id == record.create_uid
 
     @api.depends('approvals_id.approve_state')
     def _compute_state(self):

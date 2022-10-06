@@ -6,6 +6,8 @@
         <field name="model">sale.order</field>
         <field name="inherit_id" ref="sale.view_order_form"/>
         <field name="arch" type="xml">
+
+<!--            Hide the old header-->
             <xpath expr="//header" position="attributes">
                 <attribute name="states" />
                 <!-- delete states attribute, it's influencing invisible behaviour -->

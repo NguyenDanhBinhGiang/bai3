@@ -5,7 +5,8 @@ from odoo import models, fields, api
 class SaleOrderInherit(models.Model):
     _inherit = 'sale.order'
 
-    business_plan = fields.One2many('business.plan', 'sale_order_id', 'Business plan', required=True)
+    business_plan = fields.One2many('business.plan', 'sale_order_id', 'Business plan',
+                                    required=True, ondelete='restrict')
     state = fields.Selection([
         ('draft', 'Quotation'),
         ('sent', 'Quotation Sent'),
