@@ -6,6 +6,7 @@
       <field name="model">business.plan</field>
       <field name="arch" type="xml">
         <tree>
+          <field name="name"/>
           <field name="sale_order_id" widget="many2one_tags"/>
           <field name="detail"/>
           <field name="state"/>
@@ -18,30 +19,30 @@
     <field name="name">Business plan Form</field>
     <field name="model">business.plan</field>
     <field name="arch" type="xml" >
-        <form attrs="{'readonly': [('state', '!=', 'draft')]}">
+        <form>
             <header>
                 <button name="make_sent" type="object" string="Sent for confirmation" class="oe_highlight"
-                        attrs="{'invisible': [('state', '!=', 'draft')]}"
+                        attrs="{'invisible': [('state', 'not in', ['draft', 'declined'])]}"
                 />
                 <field name="state" widget="statusbar"
                        statusbar_visible="draft,sent,approved"/>
+                <field name="readonly_state"/>
             </header>
             <sheet>
                 <group>
-                    <field name="name" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
-                    <field name="sale_order_id" widget="many2one_tags"
-                           attrs="{'readonly': [('state', '!=', 'draft')]}"/>
-                    <field name="detail" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                    <field name="name" attrs="{'readonly': [('readonly_state', '=', True)]}"/>
+                    <field name="sale_order_id" widget="many2one_tags"/>
+                    <field name="detail" attrs="{'readonly': [('readonly_state', '=', True)]}"/>
                 </group>
                 <group>
                     <field
                         name="approvals_id"
                         widget="section_and_note_one2many"
                         mode="tree"
-                        attrs="{'readonly': [('state', '!=', 'draft')]}"
+                        attrs="{'readonly': [('readonly_state', '=', True)]}"
                     >
                         <tree editable="bottom">
-                            <field name="partner_id"/>
+                            <field name="user_id"/>
                             <field name="approve_state" readonly="True"/>
                             <field name="btn_visible" readonly="True" invisible="True"/>
                             <button name="make_approved" type="object" string="Approve" class="oe_highlight"
