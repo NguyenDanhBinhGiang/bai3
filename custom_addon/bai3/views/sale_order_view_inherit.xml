@@ -6,46 +6,25 @@
         <field name="model">sale.order</field>
         <field name="inherit_id" ref="sale.view_order_form"/>
         <field name="arch" type="xml">
-            <xpath expr="//button[@name='action_quotation_send']" position="replace">
-                <field name="business_plan" invisible="True"/>
-                <button name="open_plan_form" type="object"
-                    string="Create plan" class="oe_highlight"
-                />
+            <xpath expr="//header" position="attributes">
+                <attribute name="states" />
+                <!-- delete states attribute, it's influencing invisible behaviour -->
+                <attribute name="invisible">1</attribute>
             </xpath>
+
+            <xpath expr="//header" position="after">
+                <header>
+                    <field name="business_plan" invisible="True"/>
+                    <button name="open_plan_form" type="object"
+                        string="Create plan" class="oe_highlight"
+                    />
+                    <field name="state" widget="statusbar" statusbar_visible="draft,sent,sale"/>
+                </header>
+            </xpath>
+
             <xpath expr="//field[@name='validity_date']" position="replace">
-                <field name="business_plan" readonly="True"/>
+                <field name="display_business_plan_tag" readonly="True" widget="many2one_tags"/>
             </xpath>
-
-
-<!--            Delete the "Confirm" button-->
-            <xpath expr="//button[@name='action_confirm'][1]" position="attributes">
-                <attribute name="states" />
-                <!-- delete states attribute, it's influencing invisible behaviour -->
-                <attribute name="invisible">1</attribute>
-            </xpath>
-            <xpath expr="//button[@name='action_confirm'][2]" position="attributes">
-                <attribute name="states" />
-                <!-- delete states attribute, it's influencing invisible behaviour -->
-                <attribute name="invisible">1</attribute>
-            </xpath>
-
-<!--            Delete the "Send by email" button-->
-            <xpath expr="//button[@name='action_quotation_send'][1]" position="attributes">
-                <attribute name="states" />
-                <!-- delete states attribute, it's influencing invisible behaviour -->
-                <attribute name="invisible">1</attribute>
-            </xpath>
-            <xpath expr="//button[@name='action_quotation_send'][2]" position="attributes">
-                <attribute name="states" />
-                <!-- delete states attribute, it's influencing invisible behaviour -->
-                <attribute name="invisible">1</attribute>
-            </xpath>
-            <xpath expr="//button[@name='action_quotation_send'][3]" position="attributes">
-                <attribute name="states" />
-                <!-- delete states attribute, it's influencing invisible behaviour -->
-                <attribute name="invisible">1</attribute>
-            </xpath>
-
         </field>
     </record>
   </data>

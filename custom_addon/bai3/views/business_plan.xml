@@ -21,8 +21,9 @@
     <field name="arch" type="xml" >
         <form>
             <header>
-                <button name="make_sent" type="object" string="Sent for confirmation" class="oe_highlight"
-                        attrs="{'invisible': [('state', 'not in', ['draft', 'declined'])]}"
+                <button name="make_sent" type="object"
+                        string="Sent for confirmation" class="oe_highlight"
+                        attrs="{'invisible': [('readonly_state', '=', True)]}"
                 />
                 <field name="state" widget="statusbar"
                        statusbar_visible="draft,sent,approved"/>

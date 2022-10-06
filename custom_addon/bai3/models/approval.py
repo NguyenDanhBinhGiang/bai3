@@ -38,6 +38,7 @@ class Approval(models.Model):
         allowed = [('draft', 'draft'),
                    ('draft', 'approved'),
                    ('draft', 'declined'),
+                   ('approved', 'draft'),
                    ('declined', 'draft')]
         return (old_state, new_state) in allowed
 

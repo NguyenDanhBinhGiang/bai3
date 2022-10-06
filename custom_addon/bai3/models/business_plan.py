@@ -14,16 +14,21 @@ class BusinessPlan(models.Model):
         ('declined', 'Declined')],
         string='Status', readonly=True, index=True, default='draft', compute='_compute_state', store=True)
     readonly_state = fields.Boolean(compute='_compute_readonly', invisible=True, default=False)
-    # TODO: change default
     sale_order_id = fields.Many2one('sale.order', required=True, readonly=True)
-    name = fields.Char(default='New plan')
+    name = fields.Char(compute='_compute_name', store=True)
     detail = fields.Text('Business info', required=True)
     approvals_id = fields.Many2many('approval', 'business_approval_rel', 'approvals_id', 'business_plan_id')
+    # rec_name = fields.Text(compute='_compute_rec_name', invisible=True)
+
+    @api.depends('name', 'sale_order_id.name')
+    def _compute_name(self):
+        for record in self:
+            record.name = f"Sale order/{record.sale_order_id.name}"
 
     @api.depends('state')
     def _compute_readonly(self):
         for record in self:
-            record.readonly_state = record.state not in ['draft', 'decline']  # or self.env.user.id == record.create_uid
+            record.readonly_state = record.state not in ['draft', 'declined']  # or self.env.user.id == record.create_uid
 
     @api.depends('approvals_id.approve_state')
     def _compute_state(self):
@@ -34,7 +39,7 @@ class BusinessPlan(models.Model):
                 if any(decline_result):
                     try:
                         record.change_state('declined')
-                        self.sudo().message_post(body=f'Your plan \"{record.name}\" has been declined',
+                        self.sudo().message_post(body=f'Business plan \"{record.name}\" has been declined',
                                                  partner_ids=[record.create_uid.partner_id.id],
                                                  message_type='notification')
                     except odoo.exceptions.UserError as e:
@@ -43,7 +48,7 @@ class BusinessPlan(models.Model):
                 elif all(approve_result):
                     try:
                         record.change_state('approved')
-                        self.sudo().message_post(body=f'Your plan \"{record.name}\" has been approved',
+                        self.sudo().message_post(body=f'Business plan \"{record.name}\" has been approved',
                                                  partner_ids=[record.create_uid.partner_id.id],
                                                  message_type='notification')
                     except odoo.exceptions.UserError as e:
@@ -72,7 +77,7 @@ class BusinessPlan(models.Model):
         for a in self.approvals_id:
             a.sudo().make_draft()
         message_list = self.approvals_id.mapped('user_id.partner_id.id')
-        self.sudo().message_post(body='New business plan need your approval',
+        self.sudo().message_post(body='Business plan need approval',
                                  partner_ids=message_list,
                                  message_type='notification')
         self.change_state('sent')

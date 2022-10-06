@@ -14,6 +14,15 @@ class SaleOrderInherit(models.Model):
         ('cancel', 'Cancelled'),
     ], string='Status', readonly=True, copy=False, index=True, store=True, default='draft', compute='_check_approved')
 
+    # Store the business plan id for display only
+    display_business_plan_tag = fields.Many2one('business.plan', 'Business plan',
+                                                compute='_compute_business_plan_tag')
+
+    @api.depends('business_plan')
+    def _compute_business_plan_tag(self):
+        for record in self:
+            record.display_business_plan_tag = record.business_plan
+
     @api.model
     def is_allowed_transition(self, old_state, new_state):
         allowed = [('draft', 'sent'),
