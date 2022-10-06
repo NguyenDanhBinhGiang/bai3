@@ -13,7 +13,6 @@ class BusinessPlan(models.Model):
         ('approved', 'Approved'),
         ('declined', 'Declined')],
         string='Status', readonly=True, index=True, default='draft', compute='_compute_state', store=True)
-    readonly_state = fields.Boolean(compute='_compute_readonly', invisible=True, default=False)
     sale_order_id = fields.Many2one('sale.order', required=True, readonly=True, ondelete='restrict')
     name = fields.Char(compute='_compute_name', store=True)
     detail = fields.Text('Business info', required=True)
@@ -21,6 +20,13 @@ class BusinessPlan(models.Model):
                                     ondelete='cascade')
 
     # rec_name = fields.Text(compute='_compute_rec_name', invisible=True)
+    """Computed fields for form attribute"""
+    readonly_state = fields.Boolean(compute='_compute_readonly', invisible=True, default=False)
+    sent_btn_visible = fields.Boolean(compute='_compute_sent_btn_visible', invisible=True, default=True)
+
+    def _compute_sent_btn_visible(self):
+        for record in self:
+            record.sent_btn_visible = self.env.user == record.create_uid
 
     @api.constrains('approvals_id')
     def constrain_approval(self):
@@ -91,3 +97,10 @@ class BusinessPlan(models.Model):
                                  message_type='notification')
         self.change_state('sent')
         pass
+
+    def write(self, vals):
+        if self.readonly_state:
+            raise odoo.exceptions.UserError('You can not edit project detail after sending it')
+
+        super(BusinessPlan, self).write(vals)
+

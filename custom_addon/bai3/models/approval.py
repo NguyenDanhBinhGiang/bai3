@@ -5,8 +5,12 @@ from odoo import models, fields, api
 class Approval(models.Model):
     _name = 'approval'
     _rec_name = 'user_id'
+    # _inherit = ['mail.thread']
+    _sql_constraints = [
+        ('check_user_id', 'CHECK(user_id is not null)', 'user_id must not be null')
+    ]
 
-    user_id = fields.Many2one('res.users')
+    user_id = fields.Many2one('res.users', required=True)
     business_plan_id = fields.Many2many('business.plan', 'business_approval_rel',
                                         'business_plan_id', 'approvals_id', ondelete='cascade')
     approve_state = fields.Selection([
@@ -28,9 +32,6 @@ class Approval(models.Model):
         if not self.user_has_groups('bai3.business_plan_manager'):
             if 'approve_state' in vals:
                 raise odoo.exceptions.UserError('You do not have permission!')
-        # else:
-        #     if self.approve_state != 'draft':
-        #         raise odoo.exceptions.UserError('You can not edit project detail after sending it')
         super(Approval, self).write(vals)
 
     @api.model
@@ -56,8 +57,16 @@ class Approval(models.Model):
         if not self.user_id == self.env.user:
             raise odoo.exceptions.UserError("You can not approve for other people!")
         self.change_state('approved')
+        self.business_plan_id.sudo().message_post(body=f'{self.env.user.name} approved the plan',
+                                                  partner_ids=[self.business_plan_id.create_uid.partner_id.id],
+                                                  message_type='notification')
+        pass
 
     def make_declined(self):
         if not self.user_id == self.env.user:
             raise odoo.exceptions.UserError("You can not decline for other people!")
         self.change_state('declined')
+        self.business_plan_id.sudo().message_post(body=f'{self.env.user.name} declined the plan',
+                                                  partner_ids=[self.business_plan_id.create_uid.partner_id.id],
+                                                  message_type='notification')
+        pass

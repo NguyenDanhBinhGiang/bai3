@@ -21,13 +21,15 @@
     <field name="arch" type="xml" >
         <form>
             <header>
+                <field name="readonly_state" invisible='True'/>
+                <field name="sent_btn_visible" invisible='True'/>
+
                 <button name="make_sent" type="object"
-                        string="Sent for confirmation" class="oe_highlight"
-                        attrs="{'invisible': [('readonly_state', '=', True)]}"
+                string="Sent for confirmation" class="oe_highlight"
+                attrs="{'invisible': ['|',('readonly_state', '=', True), ('sent_btn_visible', '!=', True)]}"
                 />
                 <field name="state" widget="statusbar"
-                       statusbar_visible="draft,sent,approved"/>
-                <field name="readonly_state"/>
+                statusbar_visible="draft,sent,approved"/>
             </header>
             <sheet>
                 <group>
