@@ -2,14 +2,15 @@ import odoo.exceptions
 from odoo import models, fields, api
 
 
-class BusinessProject(models.Model):
-    _name = 'business.project'
+class BusinessPlan(models.Model):
+    _name = 'business.plan'
     _inherit = ['mail.thread', 'mail.activity.mixin']
 
-    name = fields.Char(default='New Project')
+    # TODO: change default
+    name = fields.Char(default='New plan')
     sale_order_id = fields.Many2one('sale.order', required=True)
     detail = fields.Text('Business info', required=True)
-    approvals_id = fields.Many2many('approval', 'business_approval_rel', 'approvals_id', 'business_project_id')
+    approvals_id = fields.Many2many('approval', 'business_approval_rel', 'approvals_id', 'business_plan_id')
     state = fields.Selection([
         ('draft', 'New'),
         ('sent', 'Waiting for confirmation'),
@@ -26,7 +27,7 @@ class BusinessProject(models.Model):
                 if any(decline_result):
                     try:
                         record.change_state('declined')
-                        self.sudo().message_post(body=f'Your project \"{record.name}\" has been declined',
+                        self.sudo().message_post(body=f'Your plan \"{record.name}\" has been declined',
                                                  partner_ids=[record.create_uid.partner_id.id],
                                                  message_type='notification')
                     except odoo.exceptions.UserError as e:
@@ -35,7 +36,7 @@ class BusinessProject(models.Model):
                 elif all(approve_result):
                     try:
                         record.change_state('approved')
-                        self.sudo().message_post(body=f'Your project \"{record.name}\" has been approved',
+                        self.sudo().message_post(body=f'Your plan \"{record.name}\" has been approved',
                                                  partner_ids=[record.create_uid.partner_id.id],
                                                  message_type='notification')
                     except odoo.exceptions.UserError as e:
@@ -62,7 +63,7 @@ class BusinessProject(models.Model):
         self.ensure_one()
 
         for u in self.approvals_id.mapped('partner_id'):
-            self.sudo().message_post(body='New business project need your approval',
+            self.sudo().message_post(body='New business plan need your approval',
                                      partner_ids=[u.id],
                                      message_type='notification')
         self.change_state('sent')

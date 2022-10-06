@@ -1,9 +1,9 @@
 <odoo>
   <data>
     <!-- list view  -->
-    <record model="ir.ui.view" id="project_list_view">
-      <field name="name">Business Project List view</field>
-      <field name="model">business.project</field>
+    <record model="ir.ui.view" id="plan_list_view">
+      <field name="name">Business plan List view</field>
+      <field name="model">business.plan</field>
       <field name="arch" type="xml">
         <tree>
           <field name="sale_order_id" widget="many2one_tags"/>
@@ -14,9 +14,9 @@
     </record>
 
     <!-- form  -->
-    <record id="project_form" model="ir.ui.view">
-    <field name="name">Business Project Form</field>
-    <field name="model">business.project</field>
+    <record id="plan_form" model="ir.ui.view">
+    <field name="name">Business plan Form</field>
+    <field name="model">business.plan</field>
     <field name="arch" type="xml" >
         <form attrs="{'readonly': [('state', '!=', 'draft')]}">
             <header>
@@ -64,29 +64,29 @@
     </record>
 
 <!--Default filter-->
-<!--    <record id="business_project_filters" model="ir.ui.view">-->
-<!--      <field name="name">business project filters</field>-->
-<!--      <field name="model">business.project</field>-->
+<!--    <record id="business_plan_filters" model="ir.ui.view">-->
+<!--      <field name="name">business plan filters</field>-->
+<!--      <field name="model">business.plan</field>-->
 <!--      <field name="arch" type="xml">-->
 <!--          <search>-->
-<!--              <filter string="My Project" name="my_business_project" domain="[('create_uid', '=', uid)]"/>-->
+<!--              <filter string="My plan" name="my_business_plan" domain="[('create_uid', '=', uid)]"/>-->
 <!--          </search>-->
 <!--      </field>-->
 <!--    </record>-->
 
     <!-- actions opening views on models -->
-    <record id='business_project_action_window' model='ir.actions.act_window'>
-        <field name="name">Business Project</field>
-        <field name="res_model">business.project</field>
-        <field name="context">{'my_business_project': 1}</field>
+    <record id='business_plan_action_window' model='ir.actions.act_window'>
+        <field name="name">Business plan</field>
+        <field name="res_model">business.plan</field>
+<!--        <field name="context">{'my_business_plan': 1}</field>-->
         <field name="view_ids" eval="[(5, 0, 0),
-            (0, 0, {'view_mode': 'tree', 'view_id': ref('project_list_view')}),
-            (0, 0, {'view_mode': 'form', 'view_id': ref('project_form')})]"
+            (0, 0, {'view_mode': 'tree', 'view_id': ref('plan_list_view')}),
+            (0, 0, {'view_mode': 'form', 'view_id': ref('plan_form')})]"
         />
         <field name="view_mode">tree,form</field>
     </record>
 
     <!-- menu item -->
-    <menuitem name="Project" id="project_menu" action="business_project_action_window" parent="sale.sale_menu_root"/>
+    <menuitem name="Business plan" id="plan_menu" action="business_plan_action_window" parent="sale.sale_menu_root"/>
   </data>
 </odoo>

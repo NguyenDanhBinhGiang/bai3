@@ -7,8 +7,8 @@ class Approval(models.Model):
     _rec_name = 'partner_id'
 
     partner_id = fields.Many2one('res.partner')
-    business_project_id = fields.Many2many('business.project', 'business_approval_rel',
-                                           'business_project_id', 'approvals_id')
+    business_plan_id = fields.Many2many('business.plan', 'business_approval_rel',
+                                        'business_plan_id', 'approvals_id')
     approve_state = fields.Selection([
         ('draft', 'Waiting for review'),
         ('approved', 'Approved'),
@@ -20,12 +20,12 @@ class Approval(models.Model):
     def _compute_btn_visible(self):
         for record in self:
             is_correct_user = (record.env.user.partner_id == record.partner_id)
-            project_is_waiting_for_approve = record.business_project_id.state == 'sent'
+            plan_is_waiting_for_approve = record.business_plan_id.state == 'sent'
             approval_gave = record.approve_state != 'draft'
-            record.btn_visible = is_correct_user and project_is_waiting_for_approve and not approval_gave
+            record.btn_visible = is_correct_user and plan_is_waiting_for_approve and not approval_gave
 
     def write(self, vals):
-        if not self.user_has_groups('bai3.business_project_manager'):
+        if not self.user_has_groups('bai3.business_plan_manager'):
             if 'approve_state' in vals:
                 raise odoo.exceptions.UserError('You do not have permission!')
         # else:

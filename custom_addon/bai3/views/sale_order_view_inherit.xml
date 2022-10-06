@@ -1,19 +1,19 @@
 <odoo>
   <data>
-    <!--      button to business project form-->
-    <record id="to_business_project_form" model="ir.ui.view">
-        <field name="name">TO PROJECT</field>
+    <!--      button to business plan form-->
+    <record id="to_business_plan_form" model="ir.ui.view">
+        <field name="name">TO plan</field>
         <field name="model">sale.order</field>
         <field name="inherit_id" ref="sale.view_order_form"/>
         <field name="arch" type="xml">
             <xpath expr="//button[@name='action_quotation_send']" position="replace">
-                <field name="business_project" invisible="True"/>
-                <button name="open_project_form" type="object"
-                    string="Create Project" class="oe_highlight"
+                <field name="business_plan" invisible="True"/>
+                <button name="open_plan_form" type="object"
+                    string="Create plan" class="oe_highlight"
                 />
             </xpath>
             <xpath expr="//field[@name='validity_date']" position="replace">
-                <field name="business_project" readonly="True"/>
+                <field name="business_plan" readonly="True"/>
             </xpath>
 
 

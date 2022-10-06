@@ -5,7 +5,7 @@ from odoo import models, fields, api
 class SaleOrderInherit(models.Model):
     _inherit = 'sale.order'
 
-    business_project = fields.One2many('business.project', 'sale_order_id', 'Business Project', required=True)
+    business_plan = fields.One2many('business.plan', 'sale_order_id', 'Business plan', required=True)
     state = fields.Selection([
         ('draft', 'Quotation'),
         ('sent', 'Quotation Sent'),
@@ -33,30 +33,30 @@ class SaleOrderInherit(models.Model):
         else:
             raise odoo.exceptions.UserError(f"You can't change state from {self.state} to {new_state}")
 
-    @api.depends('business_project.state')
+    @api.depends('business_plan.state')
     def _check_approved(self):
         for order in self:
-            if order.business_project:
+            if order.business_plan:
                 order.state = 'sent'
-                if order.business_project.state == 'approved':
+                if order.business_plan.state == 'approved':
                     order.state = 'sale'
-                elif order.business_project.state == 'declined':
+                elif order.business_plan.state == 'declined':
                     order.state = 'cancel'
             else:
                 order.state = 'draft'
 
     # noinspection PyUnresolvedReferences
-    def open_project_form(self):
+    def open_plan_form(self):
         self.ensure_one()
-        if self.business_project:
-            raise odoo.exceptions.UserError("Quotation already has a project")
-        view_id = self.env.ref('bai3.project_form').id
+        if self.business_plan:
+            raise odoo.exceptions.UserError("Quotation already has a plan")
+        view_id = self.env.ref('bai3.plan_form').id
         return {
             'type': 'ir.actions.act_window',
-            'name': 'New project form',
+            'name': 'New plan form',
             'view_mode': 'form',
             'view_id': view_id,
-            'res_model': 'business.project',
+            'res_model': 'business.plan',
             'target': 'new',
             'context': {
                 'default_sale_order_id': self.id,
